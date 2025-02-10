@@ -6,7 +6,9 @@ This study aims to predict popular travel destinations during holidays and major
 
 ## Dataset
 Our datasets that we decided to use are from the department of statistics singapore (singstat.gov.sg).
+
 Departure: https://tablebuilder.singstat.gov.sg/table/TS/M650641
+
 Arrivals: https://tablebuilder.singstat.gov.sg/table/TS/M650631
 
 ## Algorithms
