@@ -11,5 +11,36 @@ Departure: https://tablebuilder.singstat.gov.sg/table/TS/M650641
 
 Arrivals: https://tablebuilder.singstat.gov.sg/table/TS/M650631
 
+Inflation: 
+
+## EDA
+
+In this section, we will perform Exploratory Analysis Data to gain insights on the relationship between features and the data itself to justify if the features are useful.
+
+### Correlation Heat Map 
+
+<img src="images/corelation.png" alt="Alt text" width="500"/>
+
+This graph is to present linear relationships between features. However after anlysising it, it shows does not show a strong relationship to one another. 
+
+### Scatter Plot Holidays vs Total Traffics 
+
+<img src="images/SP_holidays-vs-traffic.png" alt="Alt text" width="500"/>
+
+This analysis is to show the relationship and data dsitribution of total traffic across the years against number of public holidays. Although it does not show strong relationship or pattern, we can tell that more traffic resides during lesser holidays.
+
+### Scatter Plot Inflation vs Traffic 
+
+<img src="images/SP_Inflation-vs-Traffic.png" alt="Alt text" width="500"/>
+
+This analysis is to show the relationship and data dsitribution of total traffic against inflation rating. This shows a strong relationship where more flights occurs when inflation were low.
+
+### Line Plot Arrivals last 10 years
+
+<img src="images/LP_Arr-last-10.png" alt="Alt text" width="500"/>
+
+This analysis is to show the relationship and data dsitribution of total traffic against inflation rating. This shows a strong relationship where more flights occurs when inflation were low.
+
+
 ## Algorithms
 
