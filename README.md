@@ -275,6 +275,43 @@ The Tuned Logistic Regression model offered the best balance of performance, gen
 
 4. Decision Tree (Classification/decisiontree.ipynb)
 
+### Model Design & Implementation
+
+#### 1. Baseline Model (Untuned Decision Tree)
+- **Initial Model**: Used **`DecisionTreeClassifier(random_state=42)`**.
+- **Evaluation**: Measured **training accuracy** and **10-fold cross-validation score** to establish baseline performance metrics before hyperparameter tuning.
+
+#### 2. Hyperparameter Tuning with GridSearchCV
+- **Grid Search**: Performed an exhaustive search over the following hyperparameters:
+  - `max_depth`: Limits tree depth to avoid overfitting.
+  - `criterion`: Split criterion (`gini` or `entropy`).
+  - `splitter`: Node splitting strategy (`best` or `random`).
+  - `min_samples_split`: Minimum samples required to split a node.
+  - `min_samples_leaf`: Minimum samples required per leaf node.
+  - `max_features`: Feature selection strategy (`sqrt`, `log2`, or `None`).
+  - `min_weight_fraction_leaf`: Minimum weighted fraction of samples in a leaf.
+  - `class_weight`: Handles class imbalance (`balanced` or `None`).
+- **Best Parameters**: Chose optimal hyperparameters using **5-fold cross-validation**.
+- **Final Model**: Trained the model with the selected hyperparameters.
+
+#### 3. Model Evaluation
+- **Untuned vs. Tuned**: Compared performance of both untuned and tuned models:
+  - **Training Set**: Evaluated **accuracy** and **cross-validation scores**.
+  - **Test Set**: Reported final **accuracy**, **confusion matrix**, and **classification report**.
+
+### Results & Insights
+
+#### Key Observations:
+- **Hyperparameter tuning improved model performance by 12.4%**, significantly reducing overfitting and enhancing generalization.
+
+#### SHAP Interaction Analysis:
+<img src="images/interaction_analysis.png" alt="Relative Importance of Each Feature" width="500"/>
+
+- **Weak Feature Interactions**: The SHAP interaction analysis reveals that feature interactions are minimal, with most interaction values centered around zero. This indicates that the key features, such as **Total Holidays**, **Year**, and **Inflation**, influence the model independently.
+- **Total Holidays**: Shows a slight but noticeable interaction with its own feature, indicating a moderate impact on predictions. However, interactions with other features remain minimal.
+- **Year & Inflation**: Both show negligible interaction, with SHAP values close to zero, confirming their independent contributions to predictions.
+- **Even SHAP Distribution**: The distribution of positive (red) and negative (blue) SHAP values is balanced, suggesting that changes in feature values do not consistently lead to higher or lower predictions, further emphasizing that the model is driven more by individual feature contributions rather than feature interactions.
+
 5. KNN (Classification/k-Nearest_Neighbours.ipynb)
 
 6. SVM (Classification/support_vector_machines.ipynb)
