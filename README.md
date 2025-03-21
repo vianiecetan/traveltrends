@@ -183,7 +183,7 @@ Still using SHAP to explain our classifier decisions, we plotted a force plot.
 The force plot above shows that total Holidays pushed the prediction higher while inflation, region, year, and month pushed the prediction lower.
 This suggests that economic conditions (inflation) and seasonal effects (year/month) reduce traffic, while holidays increase it.
 
-<img src="images/xgb_forceplot.png" alt="XGB Force Plot" width="500"/>
+<img src="images/xgb_topfeatures.png" alt="XGB Top Features" width="500"/>
 
 The bar graphs plotted show the top features plotted for each class and we can see that time-related features like Year, Month_sin, and Month_cos are consistently influential across all classes and geographical features affect traffic volume significantly, though their importance varies by class.
 
