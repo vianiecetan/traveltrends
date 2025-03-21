@@ -314,7 +314,47 @@ The Tuned Logistic Regression model offered the best balance of performance, gen
 
 5. KNN (Classification/k-Nearest_Neighbours.ipynb)
 
+k-nearest neighbours (KNN) is a non-parametric machine learning algorithm. It stores the entire training dataset and makes predictions based on the distance between new data points and the stored examples.
+
+The baseline model, achieved an accuracy of 77% which improvements can be made to further increase the accuracy based on the classification report generated in the graph below. As the Recall and F1-score is relatively low in class 1 and 2.
+<img src=images/KNN_performance_metric.png />
+
+To improved the accuracy, GridSearchCV was done to find the best optimal parameter to increase the model accuracy for this dataset.
+
+```
+param_grid = {
+    'n_neighbors': range(3, 21)
+    'weights': ['uniform', 'distance'],
+    'p': [1, 2],
+    'metric': ['minkowski', 'euclidean', 'manhattan']
+}
+```
+The fine-tuned model, achieved an accuracy of 84% which is an improvement of 9.09%. Improvements are made on class 1 and 2 recall with an improvement from 0.53 to 0.79 for class 1 and 0.53 to 0.66 for class 2.
+<img src=images/KNN_performance_metric_fine_tune.png />
+
+While the base model is able to work finely with the dataset, improvements can be made through fine-tuning the model to get the best optimal parameters to fit the model.
+<br>
+
 6. SVM (Classification/support_vector_machines.ipynb)
+
+Support Vector Machine (SVM) works by finding the optimal decision boundary (hyperpane) that seperate data points into different classes. Maximises the margin between the closest points of different classes.
+
+The baseline model, achieved an accuracy of 88% while generally this accuracy is high enough. Further improvements can be done after looking into the classification report. The Recall and F1-score is very low for class 2, indicating that the model has problem identifying class 2 data. Further improvements must be made to ensure a higher value.
+<img src=images/SVM_performance_metric.png />
+
+To improved the accuracy, GridSearchCV was done to find the best optimal parameter to increase the model accuracy for this dataset.
+
+```
+param_grid = [
+    {'kernel': ['rbf'], 'gamma': [1e-2, 1e-3, 1e-4, 1e-5], 'C': [0.001, 0.10, 0.1, 10, 25, 50, 100, 1000]},
+    {'kernel': ['sigmoid'], 'gamma': [1e-2, 1e-3, 1e-4, 1e-5], 'C': [0.001, 0.10, 0.1, 10, 25, 50, 100, 1000]},
+    {'kernel': ['linear'], 'C': [0.001, 0.10, 0.1, 10, 25, 50, 100, 1000]}
+]
+```
+The fine-tuned model achieved an accuracy of 97% which is an improvement of 10.23% Improvements are greatly made to the class 2 Recall and F1-score value, ensuring that the model is able to accurately identify the classes.
+<img src=images/SVM_performance_metric_fine_tune.png />
+While the base model accuracy is ok with the dataset, the classification report shows the unseen problem with the model that need works on to further balanced out the classifcation of the model.
+<br>
 
 ## Analysis of Results
 After experimenting with the various models, we compared our results and found that logistic regression and SVM appear to be the best based on accuracy, and both models have the same precision and recall. Hence to differentiate better, we did a 10-fold cross validation, and found that logistic regression is more balanced, with the mean accuracy of 0.9 so we pick logistic regression as the best model.
@@ -324,7 +364,7 @@ After experimenting with the various models, we compared our results and found t
 | Logistic Regression | 0.9287           | 0.9688              |
 | XGBoost             | 0.6793           | 0.6971              |
 | Decision Tree       | 0.5768           | 0.6481              |
-| KNN                 |                 |                       |
+| KNN                 | 0.7684          | 0.8374              |
 | SVM                | 0.8797           | 0.9688              |
 | Random Forest      | 0.6748           | 0.8641              |
 
