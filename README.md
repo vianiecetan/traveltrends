@@ -187,7 +187,91 @@ This suggests that economic conditions (inflation) and seasonal effects (year/mo
 
 The bar graphs plotted show the top features plotted for each class and we can see that time-related features like Year, Month_sin, and Month_cos are consistently influential across all classes and geographical features affect traffic volume significantly, though their importance varies by class.
 
-3. Logistic Regression (Regression/logistic_regression.ipynb)
+3. Logistic Regression (Classification/logistic_regression.ipynb)
+
+Logistic Regression was implemented to predict traffic classes using one-hot encoding for categorical variables instead of label encoding, which improved interpretability and model performance. This approach allowed us to capture categorical relationships without imposing artificial ordinality.
+
+We developed three variants of logistic regression models with increasing sophistication:
+
+- **Base Logistic Regression**: Standard model with default parameters achieved a baseline accuracy of 92.87% on test data. This model provided a solid foundation with a relatively simple structure and demonstrated that even a basic implementation could achieve strong results, indicating that our feature selection was effective.
+
+- **Tuned Logistic Regression**: Enhanced the base model by optimizing hyperparameters through GridSearchCV. We tuned parameters including:
+  - `C`: Regularization strength (tested values: 0.1, 1, 10, 100) to control overfitting
+  - `solver`: Algorithm for optimization (tested: 'lbfgs', 'newton-cg') to improve convergence
+  - `class_weight`: Class weighting strategy (tested: None, 'balanced') to address class imbalance
+  
+  The optimal parameters found were C=10, solver='lbfgs', and class_weight='balanced', which effectively handled the class distribution in our dataset. This model achieved the best overall performance with 96.88% test accuracy and excellent class balance (Class 0: 95.5%, Class 1: 97.4%, Class 2: 100%). The improvement over the base model demonstrated the importance of proper hyperparameter tuning.
+
+- **Logistic with Enhanced Features**: Built upon the tuned model by adding polynomial feature interactions (degree=2, interaction_only=True). This increased the model's complexity and flexibility by allowing it to capture non-linear relationships between features. While this achieved the highest validation accuracy (89.66%), it performed slightly worse on test data (93.32%) and struggled with Class 2 predictions (62.8% accuracy). This performance drop indicates potential overfitting, suggesting that the simpler tuned model might generalize better to unseen data.
+
+Cross-validation with 10 folds confirmed the model's stability with a mean accuracy of 90.50% and a low standard deviation (1.24%), indicating consistent performance across different data subsets.
+
+#### Confusion Matrix Analysis
+
+<img src="images/logistic_regression/confusion_matrix_base.png" alt="Base Logistic Regression Confusion Matrix" width="500"/>
+<img src="images/logistic_regression/confusion_matrix_tuned.png" alt="Tuned Logistic Regression Confusion Matrix" width="500"/>
+<img src="images/logistic_regression/confusion_matrix_enhanced.png" alt="Enhanced Logistic Regression Confusion Matrix" width="500"/>
+
+The confusion matrices reveal several important patterns:
+
+- **Base Model Performance**: The base model correctly classified most instances but showed some confusion between classes. It misclassified 27 instances total, with most errors occurring between Class 0 and Class 1 (20 instances of Class 0 predicted as Class 1). It achieved perfect prediction of Class 2, suggesting this class was distinctly separable.
+
+- **Tuned Model Improvements**: The tuned model substantially reduced misclassifications to just 14 instances, cutting errors by nearly 50%. It especially improved Class 0 prediction, reducing errors from 27 to 8 instances, while maintaining perfect prediction for Class 2. This suggests the balanced class weights helped address the previous bias toward the majority class.
+
+- **Enhanced Model Tradeoffs**: The enhanced features model showed mixed results. While it maintained good performance for Classes 0 and 1, it struggled specifically with Class 2, incorrectly classifying 16 instances (37%) as Class 1. This suggests that the added polynomial features created confusion between medium and high traffic patterns, possibly by overemphasizing certain feature interactions.
+
+#### SHAP Analysis for Model Explainability
+
+We conducted SHAP (SHapley Additive exPlanations) analysis to interpret feature importance, which revealed distinct patterns for each traffic class:
+
+**Class 0 (Low Traffic Volume):**
+<img src="images/logistic_regression/shap_importance_class0.png" alt="Feature Importance for Class 0" width="500"/>
+<img src="images/logistic_regression/shap_impact_class0.png" alt="Feature Impact on Class 0" width="500"/>
+
+For Class 0 (low traffic), Oceania was by far the most influential feature, with more than twice the impact of any other feature. The SHAP impact plot shows that lower values of Oceania (blue dots on the left side) pushed predictions toward Class 0, suggesting that low traffic from Oceania was a strong indicator of overall low traffic. Year was the second most important feature, with its impact varying significantly across different years, potentially capturing economic cycles or major events affecting travel patterns.
+
+**Class 1 (High Traffic Volume):**
+<img src="images/logistic_regression/shap_importance_class1.png" alt="Feature Importance for Class 1" width="500"/>
+<img src="images/logistic_regression/shap_impact_class1.png" alt="Feature Impact on Class 1" width="500"/>
+
+For Class 1 (high traffic), three major regions dominated the predictions: Oceania, Japan, and North East Asia. The impact plot shows that higher values for these regions (red dots on the right side) substantially increased the probability of Class 1 prediction. Interestingly, North East Asia showed both positive and negative impacts, with some values decreasing Class 1 probability, suggesting that traffic patterns from this region were more complex than simply high or low. The Middle East region also emerged as an important predictor for high traffic.
+
+**Class 2 (Medium Traffic Volume):**
+<img src="images/logistic_regression/shap_importance_class2.png" alt="Feature Importance for Class 2" width="500"/>
+<img src="images/logistic_regression/shap_impact_class2.png" alt="Feature Impact on Class 2" width="500"/>
+
+For Class 2 (medium traffic), Japan and North East Asia were the dominant predictors, far outweighing other features. The impact plot reveals that specific values of these features (clustered dots in the center-left) were strongly associated with medium traffic patterns. Year showed a more uniform distribution of impacts, suggesting that medium traffic patterns had consistent temporal characteristics across the time period. The cyclic feature Month_cos also played a significant role, indicating that medium traffic had stronger seasonal patterns than the other classes.
+
+**Comparative Feature Importance:**
+<img src="images/logistic_regression/top_features_comparison.png" alt="Top 10 Features Importance by Class" width="500"/>
+
+The comparative analysis clearly shows how different features drive predictions for each traffic class:
+
+- **Oceania** is the dominant predictor for Classes 0 and 1, but less important for Class 2
+- **Japan and North East Asia** are critical for Class 2, important for Class 1, but less influential for Class 0
+- **Year** maintains consistent importance across all classes, ranking in the top 5 features for each
+- **Middle East** shows moderate importance for Classes 0 and 1 but less for Class 2
+- **Seasonal indicators** (Month_sin, Month_cos) have varying importance across classes, with Month_cos being particularly important for Class 2
+
+Key insights from SHAP analysis:
+
+1. **Geographic Specialization**: Each traffic class is associated with specific geographic regions:
+   - Class 0 (low traffic): Strong negative association with Oceania
+   - Class 1 (high traffic): Strong positive associations with Oceania, Japan, and North East Asia
+   - Class 2 (medium traffic): Dominated by specific patterns from Japan and North East Asia
+
+2. **Temporal Patterns**: Year's consistent importance across all classes indicates significant temporal trends in air traffic patterns, possibly reflecting:
+   - Long-term growth trends in air travel
+   - Impact of economic cycles on travel demand
+   - Effects of specific events (e.g., global health events, economic crises)
+
+3. **Regional Seasonality**: The varying importance of Month_sin and Month_cos across classes suggests different seasonal patterns by region:
+   - Class 2 shows stronger seasonality (higher Month_cos importance)
+   - This may reflect tourism seasons, holiday patterns, or business travel cycles specific to certain regions
+
+4. **Feature Interactions**: The SHAP impact plots reveal complex interactions, with some features showing non-linear or conditional effects depending on their values
+
+The Tuned Logistic Regression model offered the best balance of performance, generalizability, and interpretability, making it our preferred model for this classification task. While the Enhanced Features model captured more complex relationships, its tendency to overfit Class 2 data made it less reliable for production use. The SHAP analysis provided valuable insights into the geographic and temporal factors driving Singapore's air traffic patterns, which could inform strategic planning for airlines, tourism agencies, and airport authorities.
 
 4. Decision Tree (Classification/decisiontree.ipynb)
 
